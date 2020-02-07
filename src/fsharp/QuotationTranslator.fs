@@ -1242,10 +1242,11 @@ let ConvMethodBase cenv env (methName, v: Val) =
         let envinner = BindFormalTypars env tps
         let witnessArgTysR = ConvTypes cenv envinner m (GenWitnessTys cenv.g witnessInfos)
         let nWitnesses = witnessArgTysR.Length
+        let witnessData = (if nWitnesses = 0 then None else Some (ExtraWitnessMethodName methName, nWitnesses))
         QP.MethodBaseData.ModuleDefn
             ({ Name = methName
                Module = parentTyconR
-               IsProperty = IsCompiledAsStaticProperty cenv.g v }, (if nWitnesses = 0 then None else Some (ExtraWitnessMethodName methName, nWitnesses)))
+               IsProperty = IsCompiledAsStaticProperty cenv.g v }, witnessData)
 
 let ConvReflectedDefinition cenv methName v e =
     let g = cenv.g

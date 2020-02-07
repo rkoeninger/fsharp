@@ -977,9 +977,9 @@ and CheckExpr (cenv: cenv) (env: env) origExpr (context: PermitByRefExpr) : Limi
             try 
                 let qscope = QuotationTranslator.QuotationGenerationScope.Create (g, cenv.amap, cenv.viewCcu, cenv.tcVal, QuotationTranslator.IsReflectedDefinition.No) 
                 let qdata = QuotationTranslator.ConvExprPublic qscope ast  
-                let typeDefs, typeSplices, exprSplices = qscope.Close()
+                let typeDefs, spliceTypes, spliceExprs = qscope.Close()
                 match savedConv.Value with 
-                | None -> savedConv:= Some (typeDefs, List.map fst typeSplices, List.map fst exprSplices, qdata)
+                | None -> savedConv:= Some (typeDefs, List.map fst spliceTypes, List.map fst spliceExprs, qdata)
                 | Some _ -> ()
             with QuotationTranslator.InvalidQuotedTerm e -> 
                 errorRecovery e m

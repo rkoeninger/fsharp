@@ -1847,12 +1847,12 @@ let GenWitnessExpr amap g m (traitInfo: TraitConstraintInfo) argExprs =
             let receiverArgOpt, argExprs = 
                 if minfo.IsInstance then
                     match argExprs with
-                    | h::t -> Some h, t
+                    | h :: t -> Some h, t
                     | argExprs -> None, argExprs
                 else None, argExprs
             let convertedArgs = (argExprs, argTypes) ||> List.map2 (fun expr expectedTy -> mkCoerceIfNeeded g expectedTy (tyOfExpr g expr) expr)
             match receiverArgOpt with
-            | Some r -> r::convertedArgs
+            | Some r -> r :: convertedArgs
             | None -> convertedArgs
 
         // Fix bug 1281: If we resolve to an instance method on a struct and we haven't yet taken 
@@ -1860,7 +1860,7 @@ let GenWitnessExpr amap g m (traitInfo: TraitConstraintInfo) argExprs =
         if minfo.IsStruct && minfo.IsInstance && (match argExprs with [] -> false | h :: _ -> not (isByrefTy g (tyOfExpr g h))) then 
             let h, t = List.headAndTail argExprs
             let wrap, h', _readonly, _writeonly = mkExprAddrOfExpr g true false PossiblyMutates h None m 
-            Some (wrap (Expr.Op(TOp.TraitCall(traitInfo), [], (h' :: t), m)))
+            Some (wrap (Expr.Op (TOp.TraitCall traitInfo, [], (h' :: t), m)))
         else        
             Some (MakeMethInfoCall amap m minfo methArgTys argExprs )
 
