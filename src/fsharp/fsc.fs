@@ -1940,16 +1940,20 @@ let main1(Args (ctok, tcGlobals, tcImports: TcImports, frameworkTcImports, gener
 
 // This is for the compile-from-AST feature of FCS.
 // TODO: consider removing this feature from FCS, which as far as I know is not used by anyone.
-let main1OfAst (ctok, legacyReferenceResolver, reduceMemoryUsage, assemblyName, target, outfile, pdbFile, dllReferences, noframework, exiter, errorLoggerProvider: ErrorLoggerProvider, inputs : ParsedInput list) =
+let main1OfAst (ctok, legacyReferenceResolver, reduceMemoryUsage, assemblyName, target, outfile, pdbFile, dllReferences, noframework, exiter, errorLoggerProvider: ErrorLoggerProvider, inputs : ParsedInput list, primary: PrimaryAssembly option) =
 
     let tryGetMetadataSnapshot = (fun _ -> None)
 
-    let tcConfigB = 
+    let mutable tcConfigB =
         TcConfigBuilder.CreateNew(legacyReferenceResolver, DefaultFSharpBinariesDir, 
             reduceMemoryUsage=reduceMemoryUsage, implicitIncludeDir=Directory.GetCurrentDirectory(), 
             isInteractive=false, isInvalidationSupported=false, 
             defaultCopyFSharpCore=CopyFSharpCoreFlag.No, 
             tryGetMetadataSnapshot=tryGetMetadataSnapshot)
+
+    match primary with
+    | Some pasm -> tcConfigB <- { tcConfigB with primaryAssembly = pasm }
+    | _ -> ()
 
     tcConfigB.framework <- not noframework 
     // Preset: --optimize+ -g --tailcalls+ (see 4505)
@@ -2205,10 +2209,10 @@ let typecheckAndCompile
 
 let compileOfAst 
        (ctok, legacyReferenceResolver, reduceMemoryUsage, assemblyName, target, 
-        outFile, pdbFile, dllReferences, noframework, exiter, errorLoggerProvider, inputs, tcImportsCapture, dynamicAssemblyCreator) = 
+        outFile, pdbFile, dllReferences, noframework, exiter, errorLoggerProvider, inputs, tcImportsCapture, dynamicAssemblyCreator, primary) = 
 
     main1OfAst (ctok, legacyReferenceResolver, reduceMemoryUsage, assemblyName, target, outFile, pdbFile, 
-                dllReferences, noframework, exiter, errorLoggerProvider, inputs)
+                dllReferences, noframework, exiter, errorLoggerProvider, inputs, primary)
     |> main2a
     |> main2b (tcImportsCapture, dynamicAssemblyCreator)
     |> main3

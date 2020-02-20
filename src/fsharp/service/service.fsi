@@ -9,6 +9,7 @@ namespace FSharp.Compiler.SourceCodeServices
 open System
 open System.IO
 
+open FSharp.Compiler.AbstractIL.IL
 open FSharp.Compiler.AbstractIL.ILBinaryReader
 open FSharp.Compiler
 open FSharp.Compiler.Ast
@@ -316,7 +317,7 @@ type public FSharpChecker =
     /// TypeCheck and compile provided AST
     /// </summary>
     /// <param name="userOpName">An optional string used for tracing compiler operations associated with this request.</param>
-    member Compile: ast:ParsedInput list * assemblyName:string * outFile:string * dependencies:string list * ?pdbFile:string * ?executable:bool * ?noframework:bool * ?userOpName: string -> Async<FSharpErrorInfo [] * int>
+    member Compile: ast:ParsedInput list * assemblyName:string * outFile:string * dependencies:string list * ?pdbFile:string * ?executable:bool * ?noframework:bool * ?primary:PrimaryAssembly * ?userOpName: string -> Async<FSharpErrorInfo [] * int>
 
     /// <summary>
     /// Compiles to a dynamic assembly using the given flags.

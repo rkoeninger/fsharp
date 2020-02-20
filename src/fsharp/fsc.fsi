@@ -68,7 +68,8 @@ val compileOfAst :
     loggerProvider: ErrorLoggerProvider * 
     inputs:ParsedInput list *
     tcImportsCapture : (TcImports -> unit) option *
-    dynamicAssemblyCreator: (TcGlobals * string * ILModuleDef -> unit) option
+    dynamicAssemblyCreator: (TcGlobals * string * ILModuleDef -> unit) option *
+    primary:PrimaryAssembly option
       -> unit
 
 
